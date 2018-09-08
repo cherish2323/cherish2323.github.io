@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html ng-app="app">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,minimal-ui">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="css/reset.css">
+	<style type="text/css">
+		.ib {
+			display: inline-block;
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		*:after,
+		*:before {
+			box-sizing: border-box;
+		}
+
+		html,
+		body {
+			width: 100%;
+			height: 100%;
+			background-color: #e9dfc7;
+			text-align: left;
+			overflow-x: hidden;
+		}
+
+		.active-mid {
+			position: fixed;
+			z-index: 1;
+			top: 50%;
+			left: 50%;
+			width: 50%;
+			height: 20%;
+			transform: translate3d(-50%, -50%, 0);
+		}
+        .whole-screen{
+            position: fixed;
+            top:0;
+            left:0;
+            width:100%;
+            height:100%;
+            z-index:2;
+            background-color: rgba(0,0,0,.5);
+        }
+		.fiction-container {
+			height: 100%;
+            font-size:14px;
+		}
+
+		.m-fiction-content {
+			color: #555;
+			padding: 15px;
+			height: 100%;
+			overflow: scroll;
+		}
+
+		.fiction-capter-title {
+			font-size: 20px;
+			line-height: 24px;
+			font-weight: bold;
+			color: #736357;
+			border-bottom: 1px solid black;
+			letter-spacing: 2px;
+		}
+        .fiction-capter-text{
+            font-size:14px;
+        }
+
+		.fiction-capter-text .little-title {
+			font-size: 16px;
+			font-weight: bold;
+			margin-top: 15px;
+		}
+
+		.fiction-capter-text p {
+			text-indent: 2em;
+			margin: 0.5em 0;
+			line-height: 26px;
+		}
+
+		/* 按钮 */
+
+		.swich-chapter {
+			width: 100%;
+			height: 32px;
+		}
+
+		.u-lab {
+			height: 100%;
+			text-align: center;
+			width: 80%;
+			margin: 0 auto;
+			font-size: 0;
+		}
+
+		.prev-chapter,
+		.next-chapter {
+			padding: 6px 30px;
+			font-size: 16px;
+			display: inline-block;
+			list-style: none;
+			height: 100%;
+			background-color: #000;
+			color: #fff;
+			border: 1px solid #fff;
+			border-radius: 6px;
+		}
+
+		.prev-chapter {
+			margin-right: 10px;
+		}
+
+		.top-nav {
+			position: fixed;
+			top: 0;
+			left: 0;
+            z-index:3;
+			background: rgba(17, 17, 17, 0.7);
+			color: #fff;
+			height: 43px;
+			line-height: 43px;
+			width: 100%;
+			font-size: 16px;
+		}
+
+		.top-nav .icon-back,
+		.top-nav .back-text {
+			display: inline-block;
+			margin-left: 10px;
+		}
+
+		.bottom-nav {
+			position: fixed;
+			bottom: 0;
+			left: 0;
+            z-index:3;
+			display: table;
+			width: 100%;
+			height: 64px;
+			background: rgba(0, 0, 0, 0.9);
+			color: #fff;
+			font-size: 0;
+			text-align: center;
+		}
+
+		.bottom-nav-item {
+			display: table-cell;
+			vertical-align: middle;
+			height: 80%;
+			width: 33%;
+			font-size: 16px;
+		}
+
+		.bottom-nav-icon {
+			width: 100%;
+			text-align: center;
+			margin-bottom: 6px;
+		}
+
+		.style-panel {
+			position: fixed;
+			bottom: 64px;
+			left: 0;
+			width: 100%;
+			height: 135px;
+			padding: 25px 30px;
+			background-color: rgba(0, 0, 0, .9);
+			color: #fff;
+			text-align: left;
+		}
+
+		.font-control-container {
+			height: 40px;
+			width: 100%;
+			padding: 5px;
+			font-size: 0;
+		}
+
+		.font-control-container .text {
+			font-size: 16px;
+			vertical-align: middle;
+		}
+
+		.font-control-container .options {
+			font-size: 16px;
+			vertical-align: middle;
+			margin-left: 15px;
+		}
+
+		.font-control-container .options .font-control {
+			margin-right: 10px;
+			text-align: center;
+			padding: 2px 35px;
+			border-radius: 15px;
+			border: 1px solid rgb(104, 97, 97);
+		}
+
+		.bg-controll-container {
+			margin-top: 10px;
+			height: 25px;
+			width: 100%;
+			font-size: 0;
+		}
+
+		.bg-controll-container .text,
+		.bg-controll-container .options {
+			height: 100%;
+			vertical-align: middle;
+		}
+
+		.bg-controll-container .text {
+			line-height: 25px;
+			font-size: 16px;
+			margin-left: 3px;
+		}
+
+		.bg-controll-container .options {
+			margin-left: 15px;
+		}
+
+		.bg-control {
+			height: 25px;
+			width: 25px;
+			border-radius: 50%;
+			margin-right: 15px;
+		}
+
+		.bg-control.bg-control-pink {
+			background-color: pink;
+		}
+
+		.bg-control.bg-control-white {
+			background-color: #fff;
+		}
+
+		.bg-control.bg-control-grey {
+			background-color: rgb(183, 143, 143);
+		}
+
+		.bg-control.bg-control-green {
+			background-color: rgb(152, 248, 208);
+		}
+
+		.current {
+			color: rgb(219, 150, 171)
+		}
+	</style>
+</head>
+
+<body>
+	<div id="root" class="fiction-container">
+		<div id="artical-action-mid" class="active-mid"></div>
+        <div id="whole-screen-bg" class="whole-screen" style="display: none"></div>
+		<div id='top-nav' class="top-nav" style='display: none'>
+			<span class="icon-back">icon</span>
+			<span class="back-text">返回书城</span>
+		</div>
+		<div id='bottom-nav' class="bottom-nav" style='display: none'>
+			<div id='catalog' class="bottom-nav-item catalog">
+				<div class="bottom-nav-icon catalog-icon">icon</div>
+				<div class="bottom-nav-text catalog-text">目录</div>
+			</div>
+			<div id='font-style' class="bottom-nav-item font-style">
+				<div class="bottom-nav-icon style-icon">icon</div>
+				<div class="bottom-nav-text style-text">字体</div>
+			</div>
+			<div id='ifnight' class="bottom-nav-item ifnight">
+				<div class="bottom-nav-icon ifnight-icon">icon</div>
+				<div class="bottom-nav-text ifnight-text">夜间</div>
+			</div>
+
+			<div class="style-panel" style='display: none'>
+				<div class="font-control-container">
+					<span class="text ib">字号</span>
+					<ul class="options ib">
+						<li id='big-font' class="font-control ib">大</li>
+						<li id='small-font' class="font-control ib">小</li>
+					</ul>
+				</div>
+				<div class="bg-controll-container">
+					<span class="text ib">背景</span>
+					<ul class="options ib" id='m-bg-control'>
+						<li id='bg-pink' class="bg-control bg-control-pink ib"></li>
+						<li id='bg-white' class="bg-control bg-control-white ib"></li>
+						<li id='bg-grey' class="bg-control bg-control-grey ib"></li>
+						<li id='bg-green' class="bg-control bg-control-green ib"></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="m-fiction-content">
+            <div id="fiction-capter-content">
+                <h2 class="fiction-capter-title">第一章</h2>
+                <div class="fiction-capter-text">
+                    <!-- <h4 class="little-title">little title</h4>
+                    <p>在讨论Bigpipe前，需要了解其技术支撑：分块传输编码。分块传输编码对应http中字段 是：Transfer-Encoding，它是HTTP1.1版本中引入的新技术，目的是在已经建立的tcp连接上持续传递内容。 通过持久连接(persistent
+                        connection)，TCP连接默认不关闭，可以被多个请求复用，不用声明Connection: keep-alive。由于浏览器和服务器实现的问题，现在还需设置Connection: keep-alive去表明当前为长连接，但协议已经不需要了。
+                        客户端和服务器发现对方一段时间没有活动，就可以主动关闭连接，也可以通过Connection: close明确指明去关闭链接。 作者：狐尼克朱迪 链接：https://www.jianshu.com/p/d4a5e682f287 來源：简书
+                        简书著作权归作者所有，任何形式的转载都请联系作者获得授权并注明出处。 通过持久连接(persistent connection)，TCP连接默认不关闭，可以被多个请求复用，不用声明Connection: keep-alive。由于浏览器和服务器实现的问题，现在还需设置Connection:
+                        keep-alive去表明当前为长连接，但协议已经不需要了。 客户端和服务器发现对方一段时间没有活动，就可以主动关闭连接，也可以通过Connection: close明确指明去关闭链接。
+                    </p>
+                    <p>在讨论Bigpipe前，需要了解其技术支撑：分块传输编码。分块传输编码对应http中字段 是：Transfer-Encoding，它是HTTP1.1版本中引入的新技术，目的是在已经建立的tcp连接上持续传递内容。 通过持久连接(persistent
+                        connection)，TCP连接默认不关闭，可以被多个请求复用，不用声明Connection: keep-alive。由于浏览器和服务器实现的问题，现在还需设置Connection: keep-alive去表明当前为长连接，但协议已经不需要了。
+                        客户端和服务器发现对方一段时间没有活动，就可以主动关闭连接，也可以通过Connection: close明确指明去关闭链接。 作者：狐尼克朱迪 链接：https://www.jianshu.com/p/d4a5e682f287 來源：简书
+                        简书著作权归作者所有，任何形式的转载都请联系作者获得授权并注明出处。 通过持久连接(persistent connection)，TCP连接默认不关闭，可以被多个请求复用，不用声明Connection: keep-alive。由于浏览器和服务器实现的问题，现在还需设置Connection:
+                        keep-alive去表明当前为长连接，但协议已经不需要了。 客户端和服务器发现对方一段时间没有活动，就可以主动关闭连接，也可以通过Connection: close明确指明去关闭链接。
+                    </p>
+                    <p>在讨论Bigpipe前，需要了解其技术支撑：分块传输编码。分块传输编码对应http中字段 是：Transfer-Encoding，它是HTTP1.1版本中引入的新技术，目的是在已经建立的tcp连接上持续传递内容。 通过持久连接(persistent
+                        connection)，TCP连接默认不关闭，可以被多个请求复用，不用声明Connection: keep-alive。由于浏览器和服务器实现的问题，现在还需设置Connection: keep-alive去表明当前为长连接，但协议已经不需要了。
+                        客户端和服务器发现对方一段时间没有活动，就可以主动关闭连接，也可以通过Connection: close明确指明去关闭链接。 作者：狐尼克朱迪 链接：https://www.jianshu.com/p/d4a5e682f287 來源：简书
+                        简书著作权归作者所有，任何形式的转载都请联系作者获得授权并注明出处。 通过持久连接(persistent connection)，TCP连接默认不关闭，可以被多个请求复用，不用声明Connection: keep-alive。由于浏览器和服务器实现的问题，现在还需设置Connection:
+                        keep-alive去表明当前为长连接，但协议已经不需要了。 客户端和服务器发现对方一段时间没有活动，就可以主动关闭连接，也可以通过Connection: close明确指明去关闭链接。
+                    </p>
+                    <p>在讨论Bigpipe前，需要了解其技术支撑：分块传输编码。分块传输编码对应http中字段 是：Transfer-Encoding，它是HTTP1.1版本中引入的新技术，目的是在已经建立的tcp连接上持续传递内容。 通过持久连接(persistent
+                        connection)，TCP连接默认不关闭，可以被多个请求复用，不用声明Connection: keep-alive。由于浏览器和服务器实现的问题，现在还需设置Connection: keep-alive去表明当前为长连接，但协议已经不需要了。
+                        客户端和服务器发现对方一段时间没有活动，就可以主动关闭连接，也可以通过Connection: close明确指明去关闭链接。 作者：狐尼克朱迪 链接：https://www.jianshu.com/p/d4a5e682f287 來源：简书
+                        简书著作权归作者所有，任何形式的转载都请联系作者获得授权并注明出处。 通过持久连接(persistent connection)，TCP连接默认不关闭，可以被多个请求复用，不用声明Connection: keep-alive。由于浏览器和服务器实现的问题，现在还需设置Connection:
+                        keep-alive去表明当前为长连接，但协议已经不需要了。 客户端和服务器发现对方一段时间没有活动，就可以主动关闭连接，也可以通过Connection: close明确指明去关闭链接。
+                    </p>
+                    <p>在讨论Bigpipe前，需要了解其技术支撑：分块传输编码。分块传输编码对应http中字段 是：Transfer-Encoding，它是HTTP1.1版本中引入的新技术，目的是在已经建立的tcp连接上持续传递内容。 通过持久连接(persistent
+                        connection)，TCP连接默认不关闭，可以被多个请求复用，不用声明Connection: keep-alive。由于浏览器和服务器实现的问题，现在还需设置Connection: keep-alive去表明当前为长连接，但协议已经不需要了。
+                        客户端和服务器发现对方一段时间没有活动，就可以主动关闭连接，也可以通过Connection: close明确指明去关闭链接。 作者：狐尼克朱迪 链接：https://www.jianshu.com/p/d4a5e682f287 來源：简书
+                        简书著作权归作者所有，任何形式的转载都请联系作者获得授权并注明出处。 通过持久连接(persistent connection)，TCP连接默认不关闭，可以被多个请求复用，不用声明Connection: keep-alive。由于浏览器和服务器实现的问题，现在还需设置Connection:
+                        keep-alive去表明当前为长连接，但协议已经不需要了。 客户端和服务器发现对方一段时间没有活动，就可以主动关闭连接，也可以通过Connection: close明确指明去关闭链接。
+                    </p> -->
+                </div>
+            </div>
+			<div class="switch-chapter">
+				<ul class="u-lab">
+					<li class="prev-chapter">上一章</li>
+					<li class="next-chapter">下一章</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<script src="lib/jquery-3.3.1.js"></script>
+	<script>
+		window.jQuery = $;
+	</script>
+	<script src="js/jquery.base64.js"></script>
+	<script src="js/jquery.jsonp.js"></script>
+
+	<script>
+		(function () {
+			// 常量
+			const $Win = $(window);
+			const $Doc = $(document);
+			const $DOM = {
+				top_nav: $('#top-nav'),
+				bottom_nav: $('#bottom-nav'),
+				fictionContent: $('.m-fiction-content'),
+				stylePanel: $('.style-panel'),
+				fontStyleButton: $('#font-style'),
+				bigFontBtn: $('#big-font'),
+				smallFontBtn: $('#small-font'),
+				fictionCapterText: $('.fiction-capter-text'),
+				bgColorControlBtn: $('#m-bg-control'),
+				body: document.body,
+                fictionCapterContent:$('#fiction-capter-content'),
+                prevBtn: $('.prev-chapter'),
+                nextBtn: $('.next-chapter'),
+                wholeScreen: $('#whole-screen-bg')
+			};
+			// 工具类
+			var Util = (function () {
+				var prefix = 'html5_reader_'; // 让存取的数据名加上前缀，防止你不知道的的重复
+				function StorageGetter(key) {
+					return window.localStorage.getItem(prefix + key);
+				}
+				function StorageSetter(key, val) {
+					return window.localStorage.setItem(prefix + key, val);
+				}
+				function getJSONP(url, callback) {
+					return $.jsonp({
+						url: url,
+						cache: true, // 是否缓存
+						callback: 'duokan_fiction_chapter',// 这不是参数callback,而是跟jsonp请求到的函数调用的函数名一直
+						success: function (result) {
+							// result就是返回的函数的执行的参数,也就是我们要的数据（待解码）
+							var data = $.base64.decode(result); // 解码参数会解码成json格式
+							var json = decodeURIComponent(escape(data)); // decodeURIComponent是个编码的方法呀
+							callback(json);
+						}
+
+					})
+				}
+				return {
+					getJSONP: getJSONP,
+					StorageGetter: StorageGetter,
+					StorageSetter: StorageSetter
+				}
+			})();
+			// 写在Util方法后面
+			var baseFontSize = parseInt(Util.StorageGetter('font_size') || 14);
+			$DOM.fictionCapterText.css('font-size', baseFontSize);
+
+			var currentBgcolor = Util.StorageGetter('bgcolor') || '#e9dfc7';
+			$DOM.body.style.backgroundColor = currentBgcolor;
+
+			function main() {
+				// 整个项目应用的入口函数，要调用一下
+				EventHandler();
+				console.dir(EventHandler);
+				OReaderModel = ReaderModel();
+				// 章节信息
+                // 渲染ui
+				OReaderModel.init(function(data){
+					ReaderBaseFrame().addHtmlToContainer($DOM.fictionCapterContent,data);
+				}); // 一个回调
+			}
+			main();
+
+
+			function ReaderModel() {
+				// 数据层 ， 接口 ，实现和服务器相关的数据交互的方法
+				var chapter_id;
+                var chapter_length;
+
+				// 获得所有章节概要信息
+				var getFictionInfo = function (callback) {
+					$.get('./data/chapter.json', function (data) {
+						// TODO 获得章节信息后的回调
+                        chapter_id = Util.StorageGetter('last_chapter_id');
+                        if(chapter_id==null){
+                            chapter_id = data.chapters[0].chapter_id + 1;
+                        }
+						 // 得到第一章的id
+                        chapter_length = data.chapters.length;
+						callback && callback(data);
+					}, 'json')
+				};
+				// 根据id,获取当前章节内容，执行callback
+				function getCurChapterContent(chapter_id, callback) { // callback是得到id后要干嘛！
+
+					$.get('data/data' + chapter_id + ".json", function (data) {
+						// 数据是 :{msg:'\u6210\u529f' ,jsonp:'{"msg": "\u6210\u529f", "result": 0, "jsonp": "http://html.read.duokan.com/mfsv2/secure/s010/60009/file?nonce=74c8522cfd8546fd8e2ab346366d24d0&token=89GiFGpK01J7WSSnxHnjoU435w7sJdY_EntshdzDbZLgSoyHzWOcfbMWIqJ4TfqoETa58Q9VLD9jJcC4MS7oa0uRTgC6JG9Poed648pU41U&sig=TtG7TCFv4lKLctffbvFC-iXwIoE"}' }
+						// jsonp的地址的内容是: 一个函数的执行，duokan_fiction_chapter('eyJ0Ijoi56ysMD...')
+						if (data.result === 0) {
+							var url = data.jsonp;   // 拿到这个是一个地址，要再发一个利用jsonp的跨域请求，才能访问到
+							// TODO 封装一个方法 发利$.jsonp发送跨域请求，请求到函数的执行，函数的参数进行解码的
+							Util.getJSONP(url, function (data) { // function(data)也是
+								callback && callback(data);  // 一般，给callback传参，这里是实参
+							})
+						}
+					}, 'json')
+				}
+				var init = function (callback) {
+					getFictionInfo(function () {
+						getCurChapterContent(chapter_id, function (data) { // 根据第一张的id得到第一章的内容
+							// TODO
+							callback && callback(data);
+						})
+					});
+				};
+                // 下一页
+                var nextChapter = function(){
+                    if(chapter_id == chapter_length){
+                        return false;
+                    }else{
+                        chapter_id+=1;
+                        getCurChapterContent(chapter_id,function(data){
+                            // 渲染
+                            ReaderBaseFrame().addHtmlToContainer($DOM.fictionCapterContent,data)
+                        });
+                        Util.StorageSetter('last_chapter_id',chapter_id)
+                    }
+
+                };
+                var prevChapter = function(){
+                    if(chapter_id == 0){
+                        return false;
+                    }else{
+                        chapter_id -= 1;
+                        getCurChapterContent(chapter_id,function(data){
+                            // 渲染
+                            ReaderBaseFrame().addHtmlToContainer($DOM.fictionCapterContent,data)
+                        });
+                        Util.StorageSetter('last_chapter_id',chapter_id)
+                    }
+                };
+				return {
+					init: init,
+                    nextChapter: nextChapter,
+                    prevChapter: prevChapter
+
+				}
+			}
+			function ReaderBaseFrame() {
+				// UI相关，js初始一个基本结构，渲染基本的ui结构
+
+				// 这个方法用来根据传入的某章节的数据进行解析，成Html代码，添加到dom结构里 
+				function _parseChaptertext(data){
+					var data = JSON.parse(data);
+					var html = '<h4>'+data.t+'</h4>';
+					var len = data.p.length
+					for(let i = 0; i<len; i++){
+						html += '<p>' + data.p[i] + '</p>'
+					}
+					return html;
+				}
+				function addHtmlToContainer(container,data){
+					container.html(_parseChaptertext(data));
+				}
+				return {
+					addHtmlToContainer: addHtmlToContainer
+				}
+			}
+
+
+			function EventHandler() {
+				// 控制层，交互的事件绑定 ，链接用户与浏览器 服务器的纽带
+
+				function changeAndStoreBgColor(currentColor) {
+					$DOM.body.style.backgroundColor = currentBgcolor;
+					Util.StorageSetter('bgcolor', currentBgcolor);
+				}
+				$('#artical-action-mid').click(function () {
+					if ($DOM.top_nav.css('display') === 'none') {
+						$DOM.top_nav.show();
+						$DOM.bottom_nav.show();
+					} else {
+						$DOM.top_nav.hide();
+						$DOM.bottom_nav.hide();
+					}
+				})
+				$DOM.fictionContent.scroll(function () {
+					$DOM.top_nav.hide();
+					$DOM.bottom_nav.hide();
+				})
+				console.log($DOM.fontStyleButton[0])
+				// $Win.scroll(function(){
+				// 	$DOM.top_nav.hide();
+				// 	$DOM.bottom_nav.hide();
+				// })
+				// 底部面板唤出
+				
+				$DOM.fontStyleButton.click(function () {
+					if ($DOM.stylePanel.css('display') == 'none') {
+						$DOM.stylePanel.show();
+						$(this).addClass('current');
+                        $DOM.wholeScreen.css('display','block');
+					} else {
+						$DOM.stylePanel.hide();
+						$(this).removeClass('current')
+					}
+				});
+                $DOM.wholeScreen.click(function(){
+                    $DOM.stylePanel.hide();
+                    $DOM.fontStyleButton.removeClass('current');
+                    $DOM.wholeScreen.css('display','none');
+                });
+				// 文字放大
+				$DOM.bigFontBtn.click(function () {
+
+					if (baseFontSize > 20) {
+						return false;
+					}
+					baseFontSize += 1;
+                   var o = $DOM.fictionCapterText[0];
+					$DOM.fictionCapterText.css('font-size', baseFontSize);
+					Util.StorageSetter('font_size', baseFontSize.toString())
+				});
+				// 文字缩小
+				$DOM.smallFontBtn.click(function () {
+					if (baseFontSize < 12) {
+						return false;
+					}
+					baseFontSize -= 1;
+					$DOM.fictionCapterText.css('font-size', baseFontSize);
+					Util.StorageSetter('font_size', baseFontSize.toString())
+				});
+				// 切换夜间模式
+				$('#ifnight').click(function () {
+					// 这里触发一下背景切换事件就好了
+					currentBgcolor = 'rgb(183, 143, 143)';
+					changeAndStoreBgColor(currentBgcolor);
+				});
+				
+				// 切换背景F
+				$DOM.bgColorControlBtn.click(function (e) {
+					currentBgcolor = document.defaultView.getComputedStyle(e.target, null).backgroundColor;
+					// currentBgcolor = e.target.style.backgroundColor;
+					// alert(currentBgcolor);
+					// $DOM.body.style.backgroundColor = currentBgcolor;
+					// Util.StorageSetter('bgcolor',currentBgcolor);
+					changeAndStoreBgColor(currentBgcolor);
+				});
+                $DOM.nextBtn.click(function(){
+                    OReaderModel.nextChapter();
+                    $DOM.fictionContent.scrollTop(0);
+                });
+                $DOM.prevBtn.click(function(){
+                    OReaderModel.prevChapter();
+                    $DOM.fictionContent.scrollTop(0);
+                })
+			}
+		})()
+new Promise(function(resolve,reject){
+    console.log(8)
+    resolve();
+    console.log(1)
+}).then(function(){
+            console.log(0)
+        })
+	</script>
+</body>
+
+</html>
